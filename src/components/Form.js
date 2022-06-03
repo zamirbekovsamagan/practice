@@ -60,7 +60,7 @@ const Form = () => {
         dispatchForm({ type: 'PASSWORD', password: event.target.value })
     }
 
-    let formIsvalid = state.usernameIsValid && state.gmailIsValid && state.passwordIsValid
+    let formIsvalid = /\d/.test(state.username) && validEmailRegex.test(state.gmail) && state.password.trim().length > 5
 
     function submitHandler(event) {
         event.preventDefault()
