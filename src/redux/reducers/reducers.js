@@ -1,5 +1,6 @@
 const formData = {
-    userData: [{}]
+    userData:[],
+    showForm:true
 }
 export const formReducer = (state = formData, action) => {
     switch (action.type) {
@@ -14,6 +15,11 @@ export const formReducer = (state = formData, action) => {
                         password: action.password
                     }
                 ]
+            }
+        case 'SHOW-FORM':
+            return{
+                ...state,
+                showForm: !state.showForm
             }
         default:
             return state

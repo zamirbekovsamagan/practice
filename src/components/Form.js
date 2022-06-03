@@ -1,81 +1,84 @@
-import { useEffect, useReducer, useState } from "react";
+import { useReducer } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import { loginForm } from "../redux/actions/actions";
+import { loginForm, showForm } from "../redux/actions/actions";
+import classes from './Form.module.css'
 
 const initState = {
-    username:'',
+    username: '',
     usernameIsValid: true,
-    gmail:'',
-    gmailIsValid:true,
-    password:'',
-    passwordIsValid:true
+    gmail: '',
+    gmailIsValid: true,
+    password: '',
+    passwordIsValid: true
 }
 const validEmailRegex = RegExp(
     /^(([^<>()\[\]\.,;:\s@\"]+(\.[^<>()\[\]\.,;:\s@\"]+)*)|(\".+\"))@(([^<>()[\]\.,;:\s@\"]+\.)+[^<>()[\]\.,;:\s@\"]{2,})$/i
 );
 
-function reducer (prevState, action){
-    switch(action.type){
+function reducer(prevState, action) {
+    switch (action.type) {
         case 'USERNAME':
-            return{
+            return {
                 ...prevState,
                 username: action.username,
                 usernameIsValid: /\d/.test(action.username)
             }
         case 'GMAIL':
-            return{
+            return {
                 ...prevState,
                 gmail: action.gmail,
-                gmailIsValid : validEmailRegex.test(action.gmail)
+                gmailIsValid: validEmailRegex.test(action.gmail)
             }
         case 'PASSWORD':
-            return{
+            return {
                 ...prevState,
                 password: action.password,
-                passwordIsValid : action.password.trim().length > 5
+                passwordIsValid: action.password.trim().length > 5
             }
+        default:
+            return prevState
     }
 }
 
 const Form = () => {
     const dispatch = useDispatch()
-    const user = useSelector(users=>users)
-   const [state, dispatchForm] = useReducer(reducer, initState)
+    const user = useSelector(users => users)
+    const [state, dispatchForm] = useReducer(reducer, initState)
 
     const navigate = useNavigate()
 
-    function usernameChangeHandler(event){
-        dispatchForm({type:'USERNAME', username:event.target.value})
+    function usernameChangeHandler(event) {
+        dispatchForm({ type: 'USERNAME', username: event.target.value })
     }
 
-    function gmailChangeHandler(event){
-        dispatchForm({type:'GMAIL', gmail: event.target.value})
+    function gmailChangeHandler(event) {
+        dispatchForm({ type: 'GMAIL', gmail: event.target.value })
     }
 
-    function passwordChangeHandler(event){
-        dispatchForm({type:'PASSWORD', password: event.target.value})
+    function passwordChangeHandler(event) {
+        dispatchForm({ type: 'PASSWORD', password: event.target.value })
     }
 
-   let formIsvalid = state.usernameIsValid && state.gmailIsValid && state.passwordIsValid
+    let formIsvalid = state.usernameIsValid && state.gmailIsValid && state.passwordIsValid
 
-    function submitHandler (event){
+    function submitHandler(event) {
         event.preventDefault()
         const password = state.password.split('')
         const pass = password.reverse().join('').concat(password[0], password[1])
         const userData = {
             ...state,
-            password:pass
+            password: pass
         }
         dispatch(loginForm(userData))
+        dispatch(showForm())
         navigate("/Login")
-        console.log(user);
     }
 
     return (
-            <form onSubmit={submitHandler}>
+        <form onSubmit={submitHandler} className={classes.form}>
             <div>
-                <label>Username</label>
+                <label>Username</label> 
                 <input type='text' name="username" onChange={usernameChangeHandler} />
                 {!state.usernameIsValid && <p>username must have digits</p>}
             </div>
